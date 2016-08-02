@@ -1,7 +1,7 @@
 '''
-reboot.py - reboots the DAP-1520 by replicating some data from the POST packet
-that's sent when rebooting the extender from the web interface. Takes one argument,
-the hostname or IP. Defaults to dlinkap.local. No password required! :D
+reboot.py - reboots the extender by replicating some data from the POST packet
+that's sent when rebooting the extender from the web interface. Takes one argument
+(the hostname or IP), defaulting to dlinkap.local. No password required! :D
 
 Copyright (c) 2016 gupti
 
@@ -22,8 +22,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 '''
 
-import sys, urllib
+import sys, urllib, http.client
 
+# Default host does not work on Linux due to DNS shenanigans
 host = "dlinkap.local"
 parameters = {"action" : "reboot_needed"}
 header = {"Content-type" : "application/x-www-form-urlencoded"}
@@ -31,19 +32,13 @@ header = {"Content-type" : "application/x-www-form-urlencoded"}
 if len(sys.argv) > 1:
 	host = sys.argv[1]
 
-sys.stdout.write("\nSending reboot packet to " + host + "...")
-sys.stdout.flush()
+print("Sending reboot packet to " + host + "...", end="")
 
-# Ensure Python 2/3 compatibility
-if sys.version_info > (3, 0):
-	import http.client
-	connection = http.client.HTTPConnection(host)
-	form = urllib.parse.urlencode(parameters)
-else:
-	import httplib
-	connection = httplib.HTTPConnection(host)
-	form = urllib.urlencode(parameters)
+connection = http.client.HTTPConnection(host)
+form = urllib.parse.urlencode(parameters)
 
-connection.request('POST', '', form, header)
-
-sys.stdout.write(" done.\n");
+try:
+	connection.request('POST', '', form, header)
+	print(" done.");
+except error:
+	print("Error sending request.", end="")
