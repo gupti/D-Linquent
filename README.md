@@ -6,4 +6,7 @@ This repository contain various unofficial and probably-not-supported-by-D-Link 
 All the files are under the zlib license.
 
 ## Files
-reboot.py - reboots a selected extender
+- reboot.py - reboots a selected extender
+- changepassword.py - changes the admin password of an extender
+
+Ideally in the future everything will be better organised and less hack-y.
